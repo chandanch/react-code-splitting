@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, lazy, Suspense } from 'react';
+const ProductDetails = lazy(() => import('./components/ProductDetails'));
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [productsList, setProducts] = useState([]);
+
+    const renderProductsList = async () => {
+        const products = (await import('./data/productsData')).products;
+        const productsListRender = products.map((product) => {
+            return (
+                <li key={product.name}>
+                    {product.name} -- ${product.price}
+                </li>
+            );
+        });
+        setProducts(productsListRender);
+    };
+
+    return (
+        <div className="App">
+            <h1> React Code Splitting</h1>
+            <hr />
+            <h2>Products List</h2>
+            <button onClick={renderProductsList}>Show Products</button>
+            <ul>{productsList.length > 0 ? productsList : ''}</ul>
+            <Suspense fallback={<p>Loading...</p>}>
+                <ProductDetails />
+            </Suspense>
+        </div>
+    );
 }
 
 export default App;

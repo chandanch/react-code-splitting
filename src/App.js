@@ -5,11 +5,19 @@ function App() {
     const [productsList, setProducts] = useState([]);
 
     const renderProductsList = async () => {
-        const products = (await import('./data/productsData')).products;
+        const products = (
+            await import(
+                './data/productsData' /* webpackChunkName: "productsData" */
+            )
+        ).products;
+        const ProductCategory = lazy(() =>
+            import('./components/ProductCategory')
+        );
         const productsListRender = products.map((product) => {
             return (
                 <li key={product.name}>
                     {product.name} -- ${product.price}
+                    <ProductCategory category={'Food'} />
                 </li>
             );
         });
